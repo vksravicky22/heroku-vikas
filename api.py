@@ -41,5 +41,38 @@ def get_students():
     
     return jsonify(student_json)
 
+# Get list of classes for a student
+@app.route('/student/<student_id>/classes', methods=['GET'])
+def get_student_classes(student_id):
+
+   cursor_students = students_coll.find()
+   cursor_students_json = json.loads(dumps(cursor_students))
+   student_name = cursor_students_json[0]
+   
+   cursor_grades = grades_coll.find()
+   cursor_grades_1 = json.loads(dumps(cursor_grades))
+   grades_df = json_normalize(cursor_grades_1)
+   # print(grades_df.head())
+   # print(student_id)
+   grades_df = grades_df.loc[grades_df["student_id"] == int(student_id)]
+   class_uniq = grades_df["class_id"].unique()
+   grades_df = grades_df.reset_index(drop=True)
+   # print(class_uniq)
+   classes= []
+   for class_ in class_uniq:
+       temp= {}
+       temp["class_id"]=str(class_)
+       classes.append(temp)
+   
+
+   final_dict= {}
+   final_dict["student_id"] = student_id
+   final_dict["student_name"] = student_name["name"]
+   final_dict["classes"] = classes
+   final_result = []
+   final_result.append(final_dict)
+   
+   return jsonify(final_result)
+
 if __name__ == '__main__':
     app.run(host='0.0.0.0')

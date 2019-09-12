@@ -1,1 +1,1 @@
-web: gunicorn manage:app
+web: gunicorn -c gunicorn.py.ini manage:app
