@@ -1,1 +1,1 @@
-web: gunicorn -c gunicorn.py.ini manage:app
+web: gunicorn -c gunicorn.py.ini manage:app --timeout 90
